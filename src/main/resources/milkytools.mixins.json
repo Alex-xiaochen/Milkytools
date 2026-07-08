@@ -1,0 +1,20 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "com.milky.milkytools.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "MinecraftMixin",
+    "ClientPacketListenerMixin",
+    "ClientPlayerMixin",
+    "PearlTrajectoryMixin",
+    "ArrowTrajectoryMixin",
+    "HeldModelMixin",
+    "HeldSwingMixin",
+    "CameraMixin",
+    "masa.MixinLitematicaInventoryUtils"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  }
+}

@@ -1,0 +1,66 @@
+plugins {
+    id "net.fabricmc.fabric-loom" version "1.16-SNAPSHOT"
+    id "maven-publish"
+}
+
+version = project.mod_version
+group = project.mod_group
+
+base {
+    archivesName = project.mod_archives_base_name
+}
+
+repositories {
+    maven { url = "https://maven.terraformersmc.com/releases/" }
+    maven {
+        name = "Fabric"
+        url = "https://maven.fabricmc.net/"
+    }
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+    }
+    mavenCentral()
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    // malilib 在 fabric.mod.json 里是硬依赖（depends malilib），必须同时参与编译与运行时。
+    implementation "maven.modrinth:malilib:${project.malilib_version}"
+    // modmenu 为可选集成（配置界面），编译与开发运行时均提供以便测试 Mod Menu 入口。
+    implementation "com.terraformersmc:modmenu:18.0.0-beta.1"
+}
+
+loom {
+    // Do not split source sets for 26.x no-mappings builds.
+    // splitEnvironmentSourceSets() can force Loom to configure remap/mappings paths.
+    mods {
+        "${project.mod_id}" {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "minecraft_dependency", project.minecraft_dependency
+
+    filesMatching("fabric.mod.json") {
+        expand(
+                "version": project.version,
+                "minecraft_dependency": project.minecraft_dependency
+        )
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 25
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+}

@@ -1,0 +1,48 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        maven {
+            name = "Fabric"
+            url = "https://maven.fabricmc.net/"
+        }
+        mavenCentral()
+        gradlePluginPortal()
+        maven {
+            name = "Jitpack"
+            url = "https://jitpack.io"
+        }
+    }
+
+    resolutionStrategy {
+        eachPlugin {
+            switch (requested.id.id) {
+                case "com.replaymod.preprocess": {
+                    useModule("com.github.Fallen-Breath:preprocessor:${requested.version}")
+                    break
+                }
+            }
+        }
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
+    repositories {
+        mavenLocal()
+        maven {
+            name = "Fabric"
+            url = "https://maven.fabricmc.net/"
+        }
+        maven {
+            name = "Modrinth"
+            url = "https://api.modrinth.com/maven"
+        }
+        mavenCentral()
+        maven {
+            name = "Jitpack"
+            url = "https://jitpack.io"
+        }
+    }
+}
+
+rootProject.name = "Milkytools"

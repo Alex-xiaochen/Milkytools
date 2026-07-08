@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "milkytools",
+  "version": "${version}",
+  "name": "Milkytools",
+  "description": "Milky's personal Minecraft client toolbox, containing small utility features and configurable hotkeys.",
+  "authors": [
+    "MilkyPark142008",
+    "Grey_Cat_awa"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.milky.milkytools.MilkytoolsClient"
+    ],
+    "modmenu": [
+      "com.milky.milkytools.config.ModMenu"
+    ]
+  },
+  "mixins": [
+    "milkytools.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.1",
+    "minecraft": "${minecraft_dependency}",
+    "fabric-api": "*",
+    "malilib": "*"
+  }
+}
