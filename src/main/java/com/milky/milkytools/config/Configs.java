@@ -113,6 +113,28 @@ public class Configs implements IConfigHandler {
             "运动相机 速度", 0.3, 0.0, 1.0, "非第一人称（第三人称）下相机平滑跟随的速度（0 完全静止，1 完全贴合真实位置）。"
     );
 
+    public static final ConfigBoolean TOTEM_PARTICLE_ENABLED = new ConfigBoolean(
+            "图腾粒子自定义",
+            false,
+            "开启后，用自定义颜色与速度替换不死图腾激活时默认的金色粒子。仅影响显示，不影响图腾的保命效果与音效。"
+    );
+
+    public static final ConfigDouble TOTEM_PARTICLE_VELOCITY_XZ = new ConfigDouble(
+            "图腾粒子 水平速度", 100.0, 0.0, 500.0, "水平方向（X/Z）粒子速度缩放百分比（100 为原版速度）。"
+    );
+
+    public static final ConfigDouble TOTEM_PARTICLE_VELOCITY_Y = new ConfigDouble(
+            "图腾粒子 垂直速度", 100.0, 0.0, 500.0, "垂直方向（Y）粒子速度缩放百分比（100 为原版速度）。"
+    );
+
+    public static final ConfigColor TOTEM_PARTICLE_COLOR = new ConfigColor(
+            "图腾粒子 颜色1", Color4f.fromColor(0xFFFFFF)
+    );
+
+    public static final ConfigColor TOTEM_PARTICLE_COLOR2 = new ConfigColor(
+            "图腾粒子 颜色2", Color4f.fromColor(0x000000)
+    );
+
     // 按下时激活一次的热键列表。InputHandler 和 HotkeysCallback 都会使用这里。
     public static final ImmutableList<ConfigHotkey> KEY_LIST = ImmutableList.of(
             QUICK_FIREWORK
@@ -136,7 +158,12 @@ public class Configs implements IConfigHandler {
             MOTION_CAMERA_ENABLED,
             MOTION_CAMERA_NO_FIRST_PERSON,
             MOTION_CAMERA_FIRST_PERSON_SPEED,
-            MOTION_CAMERA_SPEED
+            MOTION_CAMERA_SPEED,
+            TOTEM_PARTICLE_ENABLED,
+            TOTEM_PARTICLE_VELOCITY_XZ,
+            TOTEM_PARTICLE_VELOCITY_Y,
+            TOTEM_PARTICLE_COLOR,
+            TOTEM_PARTICLE_COLOR2
     );
 
     @Override

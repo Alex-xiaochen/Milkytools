@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "milkytools",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "name": "Milkytools",
   "description": "Milky's personal Minecraft client toolbox, containing small utility features and configurable hotkeys.",
   "authors": [
