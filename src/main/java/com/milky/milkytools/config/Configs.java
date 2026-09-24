@@ -135,6 +135,96 @@ public class Configs implements IConfigHandler {
             "图腾粒子 颜色2", Color4f.fromColor(0x000000)
     );
 
+    public static final ConfigBoolean NAMETAGS_ENABLED = new ConfigBoolean(
+            "自定义名牌",
+            false,
+            "开启后，在屏幕上为其他玩家绘制投影名牌：名称、延迟、血量与图腾次数，并可显示护甲/手持物品。\n纯客户端显示，不影响服务端与其他玩家。"
+    );
+
+    public static final ConfigBoolean NAMETAGS_PING = new ConfigBoolean(
+            "名牌 延迟", true, "在名牌上显示该玩家的延迟（毫秒）。"
+    );
+
+    public static final ConfigBoolean NAMETAGS_HEALTH = new ConfigBoolean(
+            "名牌 血量", true, "在名牌上显示该玩家的当前血量（含伤害吸收）。"
+    );
+
+    public static final ConfigBoolean NAMETAGS_POPS = new ConfigBoolean(
+            "名牌 图腾", true, "在名牌上显示本次进入世界后该玩家使用不死图腾的次数。"
+    );
+
+    public static final ConfigBoolean NAMETAGS_ARMOR = new ConfigBoolean(
+            "名牌 护甲", true, "在名牌上显示该玩家四个护甲槽的物品。"
+    );
+
+    public static final ConfigBoolean NAMETAGS_HANDS = new ConfigBoolean(
+            "名牌 手持", true, "在名牌上显示该玩家主手与副手的物品。"
+    );
+
+    public static final ConfigBoolean NAMETAGS_ONLY_VISIBLE = new ConfigBoolean(
+            "名牌 仅无界面时",
+            true,
+            "开启时，只要打开了任意界面（背包、聊天等）就隐藏名牌；关闭时始终显示。"
+    );
+
+    public static final ConfigBoolean NAMETAGS_SELF = new ConfigBoolean(
+            "名牌 显示自己", false, "是否也为本地玩家自己绘制名牌。"
+    );
+
+    public static final ConfigDouble NAMETAGS_RANGE = new ConfigDouble(
+            "名牌 范围", 48.0, 8.0, 128.0, "在此距离（格）内才会绘制名牌，超出范围的名牌不显示。"
+    );
+
+    public static final ConfigDouble NAMETAGS_MAX_SCALE = new ConfigDouble(
+            "名牌 最大缩放", 1.0, 0.4, 3.0, "近距离时的名牌最大缩放倍数。"
+    );
+
+    public static final ConfigDouble NAMETAGS_MIN_SCALE = new ConfigDouble(
+            "名牌 最小缩放", 0.55, 0.2, 2.0, "远距离时的名牌最小缩放倍数，会随距离在最大/最小缩放之间过渡。"
+    );
+
+    public static final ConfigBoolean SPAWNER_BOXES_ENABLED = new ConfigBoolean(
+            "试炼描框",
+            false,
+            "开启后，为附近的试炼刷怪笼（含不祥变体）与宝库（含不祥宝库）绘制方框，不含普通刷怪笼。\n纯客户端显示，可穿透方块查看（透视）。"
+    );
+
+    public static final ConfigBoolean SPAWNER_BOXES_FILL = new ConfigBoolean(
+            "描框 填充",
+            true,
+            "开启时方框内部会用半透明颜色涂色；关闭时只绘制方框的边框。"
+    );
+
+    public static final ConfigDouble SPAWNER_BOXES_FILL_ALPHA = new ConfigDouble(
+            "描框 填充透明度", 60.0, 0.0, 255.0, "方框内部填充颜色的不透明度（0 完全透明，255 完全不透明）。"
+    );
+
+    public static final ConfigBoolean SPAWNER_BOXES_XRAY = new ConfigBoolean(
+            "描框 透视",
+            true,
+            "开启后方框始终绘制在最上层，即使被方块或墙壁挡住也能看到（透视）。"
+    );
+
+    public static final ConfigDouble SPAWNER_BOXES_RANGE = new ConfigDouble(
+            "描框 范围", 64.0, 8.0, 256.0, "检测并绘制方框的最大距离（格），越远消耗越高。"
+    );
+
+    public static final ConfigDouble SPAWNER_BOXES_LINE_WIDTH = new ConfigDouble(
+            "描框 线宽", 2.0, 0.5, 8.0, "方框边框的线条宽度。"
+    );
+
+    public static final ConfigColor SPAWNER_BOXES_TRIAL_SPAWNER_COLOR = new ConfigColor(
+            "描框 试炼刷怪笼颜色", Color4f.fromColor(0xFF5555)
+    );
+
+    public static final ConfigColor SPAWNER_BOXES_VAULT_COLOR = new ConfigColor(
+            "描框 宝库颜色", Color4f.fromColor(0xFFD24A)
+    );
+
+    public static final ConfigColor SPAWNER_BOXES_OMINOUS_COLOR = new ConfigColor(
+            "描框 不祥颜色", Color4f.fromColor(0xB06CFF)
+    );
+
     // 按下时激活一次的热键列表。InputHandler 和 HotkeysCallback 都会使用这里。
     public static final ImmutableList<ConfigHotkey> KEY_LIST = ImmutableList.of(
             QUICK_FIREWORK
@@ -163,7 +253,27 @@ public class Configs implements IConfigHandler {
             TOTEM_PARTICLE_VELOCITY_XZ,
             TOTEM_PARTICLE_VELOCITY_Y,
             TOTEM_PARTICLE_COLOR,
-            TOTEM_PARTICLE_COLOR2
+            TOTEM_PARTICLE_COLOR2,
+            NAMETAGS_ENABLED,
+            NAMETAGS_PING,
+            NAMETAGS_HEALTH,
+            NAMETAGS_POPS,
+            NAMETAGS_ARMOR,
+            NAMETAGS_HANDS,
+            NAMETAGS_ONLY_VISIBLE,
+            NAMETAGS_SELF,
+            NAMETAGS_RANGE,
+            NAMETAGS_MAX_SCALE,
+            NAMETAGS_MIN_SCALE,
+            SPAWNER_BOXES_ENABLED,
+            SPAWNER_BOXES_FILL,
+            SPAWNER_BOXES_FILL_ALPHA,
+            SPAWNER_BOXES_XRAY,
+            SPAWNER_BOXES_RANGE,
+            SPAWNER_BOXES_LINE_WIDTH,
+            SPAWNER_BOXES_TRIAL_SPAWNER_COLOR,
+            SPAWNER_BOXES_VAULT_COLOR,
+            SPAWNER_BOXES_OMINOUS_COLOR
     );
 
     @Override
