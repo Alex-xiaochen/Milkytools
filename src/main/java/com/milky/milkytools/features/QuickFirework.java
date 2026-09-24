@@ -74,6 +74,7 @@ public class QuickFirework {
                 || invokeLegacyClickTypeSwap(containerId, slotIndex);
     }
 
+    @SuppressWarnings("unchecked")
     private static boolean invoke26ContainerInputSwap(int containerId, int slotIndex) {
         try {
             Class<?> inputClass = Class.forName("net.minecraft.world.inventory.ContainerInput");
@@ -89,6 +90,7 @@ public class QuickFirework {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static boolean invokeLegacyClickTypeSwap(int containerId, int slotIndex) {
         try {
             Class<?> clickTypeClass = Class.forName("net.minecraft.world.inventory.ClickType");

@@ -43,5 +43,8 @@ public class MilkytoolsClient implements ClientModInitializer {
 
         fi.dy.masa.malilib.event.TickHandler.getInstance()
                 .registerClientTickHandler(minecraft -> com.milky.milkytools.features.SpawnerBoxes.onClientTick());
+
+        fi.dy.masa.malilib.event.TickHandler.getInstance()
+                .registerClientTickHandler(minecraft -> com.milky.milkytools.features.AmethystBoxes.onClientTick());
     }
 }

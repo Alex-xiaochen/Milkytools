@@ -225,6 +225,40 @@ public class Configs implements IConfigHandler {
             "描框 不祥颜色", Color4f.fromColor(0xB06CFF)
     );
 
+    public static final ConfigBoolean AMETHYST_BOXES_ENABLED = new ConfigBoolean(
+            "紫水晶母岩描框",
+            false,
+            "开启后，为附近的紫水晶母岩（Budding Amethyst）绘制方框，用于定位紫水晶洞。\n纯客户端显示，可穿透方块查看（透视）。"
+    );
+
+    public static final ConfigBoolean AMETHYST_BOXES_FILL = new ConfigBoolean(
+            "母岩描框 填充",
+            true,
+            "开启时方框内部会用半透明颜色涂色；关闭时只绘制方框的边框。"
+    );
+
+    public static final ConfigDouble AMETHYST_BOXES_FILL_ALPHA = new ConfigDouble(
+            "母岩描框 填充透明度", 60.0, 0.0, 255.0, "方框内部填充颜色的不透明度（0 完全透明，255 完全不透明）。"
+    );
+
+    public static final ConfigBoolean AMETHYST_BOXES_XRAY = new ConfigBoolean(
+            "母岩描框 透视",
+            true,
+            "开启后方框始终绘制在最上层，即使被方块或墙壁挡住也能看到（透视）。"
+    );
+
+    public static final ConfigDouble AMETHYST_BOXES_RANGE = new ConfigDouble(
+            "母岩描框 范围", 64.0, 8.0, 256.0, "检测并绘制方框的最大距离（格），越远消耗越高。"
+    );
+
+    public static final ConfigDouble AMETHYST_BOXES_LINE_WIDTH = new ConfigDouble(
+            "母岩描框 线宽", 2.0, 0.5, 8.0, "方框边框的线条宽度。"
+    );
+
+    public static final ConfigColor AMETHYST_BOXES_COLOR = new ConfigColor(
+            "母岩描框 颜色", Color4f.fromColor(0xC77DFF)
+    );
+
     // 按下时激活一次的热键列表。InputHandler 和 HotkeysCallback 都会使用这里。
     public static final ImmutableList<ConfigHotkey> KEY_LIST = ImmutableList.of(
             QUICK_FIREWORK
@@ -273,7 +307,14 @@ public class Configs implements IConfigHandler {
             SPAWNER_BOXES_LINE_WIDTH,
             SPAWNER_BOXES_TRIAL_SPAWNER_COLOR,
             SPAWNER_BOXES_VAULT_COLOR,
-            SPAWNER_BOXES_OMINOUS_COLOR
+            SPAWNER_BOXES_OMINOUS_COLOR,
+            AMETHYST_BOXES_ENABLED,
+            AMETHYST_BOXES_FILL,
+            AMETHYST_BOXES_FILL_ALPHA,
+            AMETHYST_BOXES_XRAY,
+            AMETHYST_BOXES_RANGE,
+            AMETHYST_BOXES_LINE_WIDTH,
+            AMETHYST_BOXES_COLOR
     );
 
     @Override

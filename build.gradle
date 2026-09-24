@@ -45,13 +45,16 @@ loom {
 }
 
 processResources {
-    inputs.property "version", project.version
-    inputs.property "minecraft_dependency", project.minecraft_dependency
+    def modVersion = project.version
+    def minecraftDependency = project.minecraft_dependency
+
+    inputs.property "version", modVersion
+    inputs.property "minecraft_dependency", minecraftDependency
 
     filesMatching("fabric.mod.json") {
         expand(
-                "version": project.version,
-                "minecraft_dependency": project.minecraft_dependency
+                "version": modVersion,
+                "minecraft_dependency": minecraftDependency
         )
     }
 }
@@ -61,6 +64,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_25
-    targetCompatibility = JavaVersion.VERSION_25
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
 }

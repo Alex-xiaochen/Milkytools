@@ -15,6 +15,7 @@
     "TotemParticleMixin",
     "NameTagsMixin",
     "SpawnerBoxesMixin",
+    "AmethystBoxesMixin",
     "masa.MixinLitematicaInventoryUtils"
   ],
   "injectors": {

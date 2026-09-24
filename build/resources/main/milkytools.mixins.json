@@ -13,6 +13,9 @@
     "HeldSwingMixin",
     "CameraMixin",
     "TotemParticleMixin",
+    "NameTagsMixin",
+    "SpawnerBoxesMixin",
+    "AmethystBoxesMixin",
     "masa.MixinLitematicaInventoryUtils"
   ],
   "injectors": {
