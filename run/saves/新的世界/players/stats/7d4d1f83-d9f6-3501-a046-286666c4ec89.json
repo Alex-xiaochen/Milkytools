@@ -1,0 +1,19 @@
+{
+  "stats": {
+    "minecraft:used": {
+      "minecraft:crying_obsidian": 1,
+      "minecraft:oak_log": 4,
+      "minecraft:obsidian": 1
+    },
+    "minecraft:custom": {
+      "minecraft:time_since_rest": 942,
+      "minecraft:walk_one_cm": 583,
+      "minecraft:total_world_time": 1090,
+      "minecraft:leave_game": 1,
+      "minecraft:play_time": 942,
+      "minecraft:jump": 3,
+      "minecraft:time_since_death": 942
+    }
+  },
+  "DataVersion": 4790
+}

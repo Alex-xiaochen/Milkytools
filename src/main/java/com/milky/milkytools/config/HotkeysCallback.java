@@ -1,11 +1,13 @@
 package com.milky.milkytools.config;
 
+import com.milky.milkytools.features.CoordinateBeacon;
 import com.milky.milkytools.features.QuickFirework;
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
 import fi.dy.masa.malilib.hotkeys.IHotkeyCallback;
 import fi.dy.masa.malilib.hotkeys.IKeybind;
 import fi.dy.masa.malilib.hotkeys.KeyAction;
 
+import static com.milky.milkytools.config.Configs.COORDINATE_BEACON_CLEAR;
 import static com.milky.milkytools.config.Configs.QUICK_FIREWORK;
 
 // 监听 MaLiLib 热键回调。
@@ -14,6 +16,11 @@ public class HotkeysCallback implements IHotkeyCallback {
     public boolean onKeyAction(KeyAction action, IKeybind key) {
         if (key == QUICK_FIREWORK.getKeybind()) {
             return QuickFirework.accelerated();
+        }
+
+        if (key == COORDINATE_BEACON_CLEAR.getKeybind()) {
+            CoordinateBeacon.clear();
+            return true;
         }
 
         return false;

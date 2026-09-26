@@ -259,9 +259,65 @@ public class Configs implements IConfigHandler {
             "母岩描框 颜色", Color4f.fromColor(0xC77DFF)
     );
 
+    public static final ConfigBoolean OBSIDIAN_BOXES_ENABLED = new ConfigBoolean(
+            "黑曜石描框",
+            false,
+            "开启后，为附近的黑曜石（Obsidian）与哭泣的黑曜石（Crying Obsidian，按单独颜色区分）绘制方框，用于定位废弃传送门、下界传送门框架等。\n纯客户端显示，可穿透方块查看（透视）。"
+    );
+
+    public static final ConfigBoolean OBSIDIAN_BOXES_FILL = new ConfigBoolean(
+            "黑曜石描框 填充",
+            true,
+            "开启时方框内部会用半透明颜色涂色；关闭时只绘制方框的边框。"
+    );
+
+    public static final ConfigDouble OBSIDIAN_BOXES_FILL_ALPHA = new ConfigDouble(
+            "黑曜石描框 填充透明度", 60.0, 0.0, 255.0, "方框内部填充颜色的不透明度（0 完全透明，255 完全不透明）。"
+    );
+
+    public static final ConfigBoolean OBSIDIAN_BOXES_XRAY = new ConfigBoolean(
+            "黑曜石描框 透视",
+            true,
+            "开启后方框始终绘制在最上层，即使被方块或墙壁挡住也能看到（透视）。"
+    );
+
+    public static final ConfigDouble OBSIDIAN_BOXES_RANGE = new ConfigDouble(
+            "黑曜石描框 范围", 64.0, 8.0, 256.0, "检测并绘制方框的最大距离（格），越远消耗越高。"
+    );
+
+    public static final ConfigDouble OBSIDIAN_BOXES_LINE_WIDTH = new ConfigDouble(
+            "黑曜石描框 线宽", 2.0, 0.5, 8.0, "方框边框的线条宽度。"
+    );
+
+    public static final ConfigColor OBSIDIAN_BOXES_COLOR = new ConfigColor(
+            "黑曜石描框 颜色", Color4f.fromColor(0x8B5CF6)
+    );
+
+    public static final ConfigColor OBSIDIAN_BOXES_CRYING_COLOR = new ConfigColor(
+            "黑曜石描框 哭泣颜色", Color4f.fromColor(0xE066FF)
+    );
+
+    public static final ConfigBoolean COORDINATE_BEACON_ENABLED = new ConfigBoolean(
+            "坐标光柱",
+            true,
+            "开启后，聊天栏里以单个空格分隔的坐标（x z 或 x y z）会变为可点击文本。\n点击聊天栏里的坐标后，会在对应 x/z 所在方块渲染一根类似信标光柱的高亮柱体；三组数字时会丢弃 y，只用 x/z。\nx/z 范围 -30000000~30000000，y 范围 -64~320。\n光柱始终绘制在最上层（透视），并可在任意距离（包括未加载区块）看到。"
+    );
+
+    public static final ConfigColor COORDINATE_BEACON_COLOR = new ConfigColor(
+            "坐标光柱 颜色", Color4f.fromColor(0x00E5FF)
+    );
+
+    public static final ConfigHotkey COORDINATE_BEACON_CLEAR = new ConfigHotkey(
+            "坐标光柱 清除",
+            "",
+            PRESS_ALLOWEXTRA,
+            "工具功能：清除当前已识别的所有坐标光柱标记。"
+    );
+
     // 按下时激活一次的热键列表。InputHandler 和 HotkeysCallback 都会使用这里。
     public static final ImmutableList<ConfigHotkey> KEY_LIST = ImmutableList.of(
-            QUICK_FIREWORK
+            QUICK_FIREWORK,
+            COORDINATE_BEACON_CLEAR
     );
 
     public static final ImmutableList<IConfigBase> ALL_CONFIGS = ImmutableList.of(
@@ -314,7 +370,17 @@ public class Configs implements IConfigHandler {
             AMETHYST_BOXES_XRAY,
             AMETHYST_BOXES_RANGE,
             AMETHYST_BOXES_LINE_WIDTH,
-            AMETHYST_BOXES_COLOR
+            AMETHYST_BOXES_COLOR,
+            OBSIDIAN_BOXES_ENABLED,
+            OBSIDIAN_BOXES_FILL,
+            OBSIDIAN_BOXES_FILL_ALPHA,
+            OBSIDIAN_BOXES_XRAY,
+            OBSIDIAN_BOXES_RANGE,
+            OBSIDIAN_BOXES_LINE_WIDTH,
+            OBSIDIAN_BOXES_COLOR,
+            OBSIDIAN_BOXES_CRYING_COLOR,
+            COORDINATE_BEACON_ENABLED,
+            COORDINATE_BEACON_COLOR
     );
 
     @Override

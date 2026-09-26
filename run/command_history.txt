@@ -1,0 +1,2 @@
+/tp 0 0 0
+/time set minecraft:day

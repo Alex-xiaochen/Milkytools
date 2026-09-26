@@ -15,14 +15,20 @@ public class MotionCamera {
     private static final Minecraft CLIENT = Minecraft.getInstance();
 
     /**
-     * 渲染相机相对真实相机允许的最大偏移（格）。
+     * 渲染相机相对真实相机允许的最大偏移（格），按整体偏移向量的长度限制。
      * 原版 WeatherEffectRenderer 用一张 32×32（长度 1024）的查找表，按
      * (雨柱坐标 - 相机坐标 + 16) 索引；雨柱是按真实相机位置生成的，而渲染用的是这里的虚拟相机位置。
-     * 一旦两者相差过大（传送/切换维度/高速飞行时虚拟坐标远远落后），索引就会越界导致崩溃。
-     * 因此把偏移限制在安全范围内：默认 weatherRadius=10 时上限约为 5 格，取 4 格留出余量，
-     * 同时保证正常行走/冲刺时仍能保留拖尾观感。
+     * 一旦两者相差过大（传送到远处时虚拟坐标远远落后），索引就会越界导致崩溃。
+     * 默认 weatherRadius=10 时安全上限约为 5 格，取 4 格留出余量。
+     * 注意这里只做“平滑饱和”，不做硬吸附，否则第三人称下相机会在拖尾与真实位置之间反复跳动。
      */
     private static final double MAX_OFFSET = 4.0;
+
+    /**
+     * 超过该距离（格）视为发生了传送/切换维度等瞬移，直接把虚拟坐标贴合到真实相机。
+     * 阈值取得远大于第三人称相机的旋转/后拉幅度，避免正常视角转动时误触发吸附而抖动。
+     */
+    private static final double SNAP_DISTANCE = 32.0;
 
     private static boolean initialized = false;
     private static boolean wasActive = false;
@@ -56,12 +62,9 @@ public class MotionCamera {
         targetY = y;
         targetZ = z;
 
-        // 尚未初始化、或目标发生大跨度跳变（传送/切换维度/进出世界）时立即贴合，
-        // 避免虚拟坐标与真实相机相差过大。
-        if (!initialized
-                || Math.abs(fakeX - x) > MAX_OFFSET
-                || Math.abs(fakeY - y) > MAX_OFFSET
-                || Math.abs(fakeZ - z) > MAX_OFFSET) {
+        // 尚未初始化，或发生了瞬移（传送/切换维度/进出世界）时才贴合，
+        // 正常视角转动、第三人称后拉不触发，避免相机抖动。
+        if (!initialized || isFarFromTarget(fakeX, fakeY, fakeZ, SNAP_DISTANCE)) {
             snapToTarget();
             initialized = true;
         }
@@ -76,8 +79,8 @@ public class MotionCamera {
             return;
         }
 
-        // 刚启用（或刚从失效态恢复）时，直接把虚拟坐标贴合到目标，避免初始跳变。
-        if (!initialized || !wasActive) {
+        // 刚启用（或刚从失效态恢复）、或发生瞬移时，直接把虚拟坐标贴合到目标。
+        if (!initialized || !wasActive || isFarFromTarget(fakeX, fakeY, fakeZ, SNAP_DISTANCE)) {
             snapToTarget();
             initialized = true;
             wasActive = true;
@@ -94,21 +97,14 @@ public class MotionCamera {
         fakeX = animate(fakeX, targetX, speed);
         fakeY = animate(fakeY, targetY, speed);
         fakeZ = animate(fakeZ, targetZ, speed);
-
-        // 跟随目标跳变过大时直接贴合，保证渲染偏移始终有界（防止天气渲染器越界崩溃）。
-        if (Math.abs(fakeX - targetX) > MAX_OFFSET
-                || Math.abs(fakeY - targetY) > MAX_OFFSET
-                || Math.abs(fakeZ - targetZ) > MAX_OFFSET) {
-            snapToTarget();
-        }
     }
 
     /** 由相机 mixin 在渲染时取出插值后的虚拟相机坐标。 */
     public static Vec3 interpolatedPosition(float partialTicks) {
-        double x = clampOffset(lerp(prevFakeX, fakeX, partialTicks), targetX);
-        double y = clampOffset(lerp(prevFakeY, fakeY, partialTicks), targetY);
-        double z = clampOffset(lerp(prevFakeZ, fakeZ, partialTicks), targetZ);
-        return new Vec3(x, y, z);
+        double x = lerp(prevFakeX, fakeX, partialTicks);
+        double y = lerp(prevFakeY, fakeY, partialTicks);
+        double z = lerp(prevFakeZ, fakeZ, partialTicks);
+        return clampToTarget(x, y, z);
     }
 
     private static void snapToTarget() {
@@ -117,15 +113,23 @@ public class MotionCamera {
         fakeZ = prevFakeZ = targetZ;
     }
 
-    /** 把虚拟坐标限制在真实目标附近 MAX_OFFSET 格内，作为渲染时的最后一道保险。 */
-    private static double clampOffset(double value, double target) {
-        if (value > target + MAX_OFFSET) {
-            return target + MAX_OFFSET;
+    /** 按整体偏移向量的长度限制到 MAX_OFFSET 内，方向保持不变，避免逐轴截断造成的跳变。 */
+    private static Vec3 clampToTarget(double x, double y, double z) {
+        double dx = x - targetX;
+        double dy = y - targetY;
+        double dz = z - targetZ;
+        double distSq = dx * dx + dy * dy + dz * dz;
+        if (distSq <= MAX_OFFSET * MAX_OFFSET) {
+            return new Vec3(x, y, z);
         }
-        if (value < target - MAX_OFFSET) {
-            return target - MAX_OFFSET;
-        }
-        return value;
+        double scale = MAX_OFFSET / Math.sqrt(distSq);
+        return new Vec3(targetX + dx * scale, targetY + dy * scale, targetZ + dz * scale);
+    }
+
+    private static boolean isFarFromTarget(double x, double y, double z, double distance) {
+        return Math.abs(x - targetX) > distance
+                || Math.abs(y - targetY) > distance
+                || Math.abs(z - targetZ) > distance;
     }
 
     private static double animate(double current, double target, double speed) {

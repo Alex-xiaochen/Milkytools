@@ -16,6 +16,10 @@
     "NameTagsMixin",
     "SpawnerBoxesMixin",
     "AmethystBoxesMixin",
+    "ObsidianBoxesMixin",
+    "CoordinateBeaconMixin",
+    "ChatComponentMixin",
+    "ChatScreenMixin",
     "masa.MixinLitematicaInventoryUtils"
   ],
   "injectors": {
