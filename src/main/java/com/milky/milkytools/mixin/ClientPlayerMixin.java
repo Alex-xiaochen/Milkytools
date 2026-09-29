@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(LocalPlayer.class)
 public class ClientPlayerMixin {
-    @Inject(method = "closeContainer", at = @At("TAIL"), require = 0)
+    @Inject(method = "closeContainer", at = @At("TAIL"))
     private void milkytools$closeContainer(CallbackInfo ci) {
         QuickShulkerSupport.reset();
     }

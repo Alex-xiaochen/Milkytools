@@ -1,7 +1,7 @@
 package com.milky.milkytools.mixin;
 
 import com.milky.milkytools.config.Configs;
-import fi.dy.masa.malilib.util.data.Color4f;
+import com.milky.milkytools.features.TrajectoryGizmos;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.debug.DebugRenderer;
@@ -29,7 +29,7 @@ public class PearlTrajectoryMixin {
     private static final double GRAVITY = 0.03;
     private static final int MAX_TICKS = 200;
 
-    @Inject(method = "emitGizmos", at = @At("TAIL"), require = 0)
+    @Inject(method = "emitGizmos", at = @At("TAIL"))
     private void milkytools$drawPearlTrajectory(Frustum frustum, double camX, double camY, double camZ, float partialTick, CallbackInfo ci) {
         if (!Configs.PEARL_TRAJECTORY.getBooleanValue()) {
             return;
@@ -50,7 +50,7 @@ public class PearlTrajectoryMixin {
         Level level = player.level();
         Vec3 eye = player.getEyePosition();
         Vec3 look = player.getLookAngle();
-        int color = colorOf();
+        int color = TrajectoryGizmos.colorOf();
 
         Vec3 position = eye;
         Vec3 velocity = look.scale(THROW_SPEED);
@@ -62,29 +62,15 @@ public class PearlTrajectoryMixin {
             HitResult hit = level.clip(context);
 
             if (hit != null && hit.getType() != HitResult.Type.MISS) {
-                drawSegment(previous, hit.getLocation(), color);
+                TrajectoryGizmos.drawSegment(previous, hit.getLocation(), color);
                 Gizmos.point(hit.getLocation(), color, 0.25F);
                 break;
             }
 
-            drawSegment(previous, next, color);
+            TrajectoryGizmos.drawSegment(previous, next, color);
             previous = next;
             position = next;
             velocity = velocity.subtract(0.0, GRAVITY, 0.0);
         }
-    }
-
-    private static void drawSegment(Vec3 from, Vec3 to, int color) {
-        if (from.distanceToSqr(to) < 1.0E-7) {
-            return;
-        }
-        Gizmos.line(from, to, color);
-    }
-
-    private static int colorOf() {
-        Color4f color = Configs.PEARL_TRAJECTORY_COLOR.getColor();
-        // Gizmo 颜色按 ARGB 解释，必须把 alpha 置为不透明，否则线条完全透明不可见。
-        int rgb = (color.ri << 16) | (color.gi << 8) | color.bi;
-        return 0xFF000000 | rgb;
     }
 }

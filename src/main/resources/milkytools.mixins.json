@@ -2,9 +2,9 @@
   "required": false,
   "minVersion": "0.8",
   "package": "com.milky.milkytools.mixin",
-  "compatibilityLevel": "JAVA_25",
+  "compatibilityLevel": "JAVA_${java}",
   "client": [
-    "MinecraftMixin",
+    "ScreenManagementMixin",
     "ClientPacketListenerMixin",
     "ClientPlayerMixin",
     "PearlTrajectoryMixin",
@@ -17,12 +17,13 @@
     "SpawnerBoxesMixin",
     "AmethystBoxesMixin",
     "ObsidianBoxesMixin",
+    "ViewArrowMixin",
     "CoordinateBeaconMixin",
     "ChatComponentMixin",
     "ChatScreenMixin",
     "masa.MixinLitematicaInventoryUtils"
   ],
   "injectors": {
-    "defaultRequire": 0
+    "defaultRequire": 1
   }
 }

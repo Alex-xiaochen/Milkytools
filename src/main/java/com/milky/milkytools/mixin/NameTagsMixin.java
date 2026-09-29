@@ -20,8 +20,7 @@ public class NameTagsMixin {
 
     @Inject(
             method = "handleEntityEvent(Lnet/minecraft/network/protocol/game/ClientboundEntityEventPacket;)V",
-            at = @At("HEAD"),
-            require = 0
+            at = @At("HEAD")
     )
     private void milkytools$trackTotemUse(ClientboundEntityEventPacket packet, CallbackInfo ci) {
         if (packet.getEventId() != NameTags.TOTEM_USE_EVENT_ID) {

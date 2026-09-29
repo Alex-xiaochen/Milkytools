@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(DebugRenderer.class)
 public class CoordinateBeaconMixin {
 
-    @Inject(method = "emitGizmos", at = @At("TAIL"), require = 0)
+    @Inject(method = "emitGizmos", at = @At("TAIL"))
     private void milkytools$drawCoordinateBeacons(Frustum frustum, double camX, double camY, double camZ,
                                                   float partialTick, CallbackInfo ci) {
         CoordinateBeacon.onRenderGizmos();

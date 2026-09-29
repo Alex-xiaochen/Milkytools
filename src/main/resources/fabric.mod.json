@@ -23,8 +23,9 @@
     "milkytools.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.19.1",
+    "fabricloader": ">=${loader}",
     "minecraft": "${minecraft_dependency}",
+    "java": ">=${java}",
     "fabric-api": "*",
     "malilib": "*"
   }

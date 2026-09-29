@@ -4,7 +4,6 @@ import com.milky.milkytools.config.Configs;
 import fi.dy.masa.malilib.util.data.Color4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.gizmos.GizmoProperties;
 import net.minecraft.gizmos.GizmoStyle;
@@ -157,7 +156,7 @@ public final class CoordinateBeacon {
             return;
         }
 
-        CameraRenderState camera = CLIENT.gameRenderer.getGameRenderState().levelRenderState.cameraRenderState;
+        var camera = CameraAccess.camera();
         if (camera == null || camera.pos == null) {
             return;
         }
@@ -166,7 +165,13 @@ public final class CoordinateBeacon {
         double camY = camera.pos.y;
         double camZ = camera.pos.z;
         // 远裁剪面随渲染距离变化，取一部分作为“拉近”距离，保证几何体一定在裁剪面内。
-        double maxDistance = clamp(camera.depthFar * FAR_PLANE_USAGE, 48.0, 2000.0);
+        // 26.1.2 起深度信息随相机状态一起给出；1.21.11 还没有这一层，从 GameRenderer 取。
+        //? if >=26.1.2 {
+        double depthFar = camera.depthFar;
+        //?} else {
+        /*double depthFar = CLIENT.gameRenderer.getDepthFar();*/
+        //?}
+        double maxDistance = clamp(depthFar * FAR_PLANE_USAGE, 48.0, 2000.0);
         double beamHeight = Math.min(MAX_BEAM_HEIGHT, maxDistance * 1.2);
 
         int rgb = color(Configs.COORDINATE_BEACON_COLOR.getColor()) & 0xFFFFFF;

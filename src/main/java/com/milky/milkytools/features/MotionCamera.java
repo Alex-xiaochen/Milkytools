@@ -7,7 +7,7 @@ import net.minecraft.world.phys.Vec3;
 /**
  * 运动相机（MotionCamera）。
  * 维护一个平滑跟随“真实相机位置”的虚拟相机坐标，渲染时把相机原点替换成插值后的虚拟坐标，
- * 从而产生相机拖尾/缓动的视觉效果。逻辑仿照 1.12.1 的 MotionCamera 模块，但适配 MC 26.1.2：
+ * 从而产生相机拖尾/缓动的视觉效果。逻辑仿照 1.12.1 的 MotionCamera 模块，但适配 MC 26.2：
  *  - 跟随目标取真实相机位置（已包含第三人称的后拉偏移），因此对第一/第三人称都适用；
  *  - 每个客户端 tick 用指数平滑把 fake 朝 target 推进，渲染帧再用 partialTicks 在 prevFake→fake 间插值。
  */

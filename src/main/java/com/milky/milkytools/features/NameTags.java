@@ -4,10 +4,19 @@ import com.milky.milkytools.config.Configs;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+//? if >=26.1.2 {
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+//?} else {
+/*import net.minecraft.client.gui.GuiGraphics;*/
+//?}
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
+//? if >=26.1.2 {
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+//?} else {
+/*import net.minecraft.client.renderer.state.CameraRenderState;*/
+//?}
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -31,6 +40,12 @@ import java.util.concurrent.ConcurrentHashMap;
  *  - 投影矩阵直接取自 26.x 的 CameraRenderState（projection * viewRotation），无需自行拼装；
  *  - 图腾次数由客户端收到的实体事件（eventId 35）统计，不依赖外部事件总线；
  *  - 名称颜色使用原版队伍颜色，并保留隐身/死亡的状态色。
+ * <p>
+ * <b>1.21.11 上暂不渲染。</b>投影需要 viewRotation × projection 两个矩阵，26.x 由
+ * {@code CameraRenderState} 直接提供；1.21.11 的 {@code Camera} 既没有
+ * {@code viewRotationMatrix}/{@code projectionMatrix} 字段，也没有 26.x 的 {@code Projection}
+ * 类，重建它们需要 {@code GameRenderer} 的私有 {@code getFov}，旋转约定也需实机对拍才能确认。
+ * 与其渲染出静默错位的名牌，不如在该版本上先留空。其余功能不受影响。
  */
 public final class NameTags {
     private static final Minecraft CLIENT = Minecraft.getInstance();
@@ -69,17 +84,36 @@ public final class NameTags {
         TOTEM_POPS.merge(player.getUUID(), 1, Integer::sum);
     }
 
-    /** Fabric HUD 回调入口。 */
+    /** HUD 是否被玩家隐藏（F1）。26.2 起从 {@code Options.hideGui} 搬到了 {@code Gui.hud}。 */
+    private static boolean hudHidden() {
+        //? if >=26.2 {
+        return CLIENT.gui.hud.isHidden();
+        //?} else {
+        /*return CLIENT.options.hideGui;*/
+        //?}
+    }
+
+    /** 当前打开的界面，没有则返回 null。26.2 起从 {@code Minecraft.screen} 搬到了 {@code Gui}。 */
+    private static Screen currentScreen() {
+        //? if >=26.2 {
+        return CLIENT.gui.screen();
+        //?} else {
+        /*return CLIENT.screen;*/
+        //?}
+    }
+
+    /** Fabric HUD 回调入口（26.1.2 起）。 */
+    //? if >=26.1.2 {
     public static void onHudExtract(GuiGraphicsExtractor graphics, DeltaTracker delta) {
         if (!Configs.NAMETAGS_ENABLED.getBooleanValue()
                 || CLIENT.player == null
                 || CLIENT.level == null
-                || CLIENT.options.hideGui) {
+                || hudHidden()) {
             return;
         }
 
         // 打开界面时是否隐藏，由“仅无界面时”决定。
-        if (Configs.NAMETAGS_ONLY_VISIBLE.getBooleanValue() && CLIENT.screen != null) {
+        if (Configs.NAMETAGS_ONLY_VISIBLE.getBooleanValue() && currentScreen() != null) {
             return;
         }
 
@@ -88,7 +122,7 @@ public final class NameTags {
             TOTEM_POPS.clear();
         }
 
-        CameraRenderState camera = CLIENT.gameRenderer.getGameRenderState().levelRenderState.cameraRenderState;
+        var camera = CameraAccess.camera();
         if (camera == null || camera.pos == null || camera.projectionMatrix == null || camera.viewRotationMatrix == null) {
             return;
         }
@@ -117,6 +151,13 @@ public final class NameTags {
             drawTag(graphics, player, PROJECTED[0], PROJECTED[1], scaleForDistance(distance));
         }
     }
+    //?} else {
+    /*public static void onHudRender(GuiGraphics graphics, DeltaTracker delta) {
+        // 1.21.11 上暂不渲染世界名牌：Camera 还没有 viewRotationMatrix / projectionMatrix
+        // （那是 26.x 的 CameraRenderState 才提供的），而重建它们需要 GameRenderer 的私有 fov，
+        // 约定也需实机对拍验证，贸然实现会得到静默错位的名牌。详见类注释。
+    }*/
+    //?}
 
     /**
      * 把玩家头顶坐标投影到 GUI 坐标，成功时写入 {@link #PROJECTED}。
@@ -156,6 +197,7 @@ public final class NameTags {
         return Math.max(min, Math.min(max, scale));
     }
 
+    //? if >=26.1.2 {
     private static void drawTag(GuiGraphicsExtractor graphics, Player player, float screenX, float screenY, float scale) {
         // 先在原始 GUI 坐标里定位，再以原点为基准缩放，等价于参照实现的矩阵缩放。
         graphics.pose().pushMatrix();
@@ -222,6 +264,7 @@ public final class NameTags {
             x += 18;
         }
     }
+    //?}
 
     private static List<Segment> buildSegments(Player player) {
         List<Segment> segments = new ArrayList<>();

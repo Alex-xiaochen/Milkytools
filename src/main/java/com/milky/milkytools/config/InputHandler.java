@@ -15,11 +15,17 @@ public class InputHandler implements IKeybindProvider, IKeyboardInputHandler {
         for (IHotkey hotkey : Configs.KEY_LIST) {
             manager.addKeybindToMap(hotkey.getKeybind());
         }
+
+        // 功能开关的快捷键也要注册，否则按下时 malilib 不会处理。
+        for (IHotkey hotkey : Configs.TOGGLE_LIST) {
+            manager.addKeybindToMap(hotkey.getKeybind());
+        }
     }
 
     @Override
     public void addHotkeys(IKeybindManager manager) {
         manager.addHotkeysForCategory(MilkytoolsClient.MOD_ID, "按下式", Configs.KEY_LIST);
+        manager.addHotkeysForCategory(MilkytoolsClient.MOD_ID, "功能开关", Configs.TOGGLE_LIST);
     }
 
     public static InputHandler getInstance() {

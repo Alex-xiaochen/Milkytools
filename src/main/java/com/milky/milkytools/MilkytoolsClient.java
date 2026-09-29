@@ -24,6 +24,7 @@ public class MilkytoolsClient implements ClientModInitializer {
 
     private void register() {
         Configs.INSTANCE.load();
+        Configs.INSTANCE.initValueChangeCallbacks();
         ConfigManager.getInstance().registerConfigHandler(MOD_ID, Configs.INSTANCE);
 
         ConfigUi.initMalilibConfig();
@@ -33,10 +34,19 @@ public class MilkytoolsClient implements ClientModInitializer {
 
         HotkeysCallback.init();
 
+        // 26.1.2 起 HudElement 的回调是 extractRenderState(GuiGraphicsExtractor, DeltaTracker)，
+        // 1.21.11 上是 render(GuiGraphics, DeltaTracker)，因此入口方法按版本二选一。
+        //? if >=26.1.2 {
         HudElementRegistry.addLast(
                 Identifier.fromNamespaceAndPath(MOD_ID, "nametags"),
                 NameTags::onHudExtract
         );
+        //?} else {
+        /*HudElementRegistry.addLast(
+                Identifier.fromNamespaceAndPath(MOD_ID, "nametags"),
+                NameTags::onHudRender
+        );*/
+        //?}
 
         fi.dy.masa.malilib.event.TickHandler.getInstance()
                 .registerClientTickHandler(minecraft -> com.milky.milkytools.features.MotionCamera.onTick());
@@ -52,5 +62,8 @@ public class MilkytoolsClient implements ClientModInitializer {
 
         fi.dy.masa.malilib.event.TickHandler.getInstance()
                 .registerClientTickHandler(minecraft -> com.milky.milkytools.features.CoordinateBeacon.onClientTick());
+
+        fi.dy.masa.malilib.event.TickHandler.getInstance()
+                .registerClientTickHandler(minecraft -> com.milky.milkytools.features.ItemBlacklist.onClientTick());
     }
 }

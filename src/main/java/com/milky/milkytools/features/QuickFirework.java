@@ -6,6 +6,11 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+//? if >=26.1.2 {
+import net.minecraft.world.inventory.ContainerInput;
+//?} else {
+/*import net.minecraft.world.inventory.ClickType;*/
+//?}
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.FireworkRocketItem;
 import net.minecraft.world.item.ItemStack;
@@ -57,11 +62,7 @@ public class QuickFirework {
         }
 
         // 40 是副手槽。通过 gameMode 发包点击，避免只改本地菜单状态。
-        // Minecraft 26.x 将旧版 ClickType 改成了 ContainerInput，并将方法名改为 handleContainerInput。
-        // 这里使用反射，避免静态引用不存在的类导致 NoClassDefFoundError。
-        if (!swapWithOffhand(menu.containerId, slotIndex)) {
-            return false;
-        }
+        swapWithOffhand(menu.containerId, slotIndex);
 
         CLIENT.gameMode.useItem(CLIENT.player, InteractionHand.OFF_HAND);
 
@@ -69,41 +70,13 @@ public class QuickFirework {
         return true;
     }
 
-    private static boolean swapWithOffhand(int containerId, int slotIndex) {
-        return invoke26ContainerInputSwap(containerId, slotIndex)
-                || invokeLegacyClickTypeSwap(containerId, slotIndex);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static boolean invoke26ContainerInputSwap(int containerId, int slotIndex) {
-        try {
-            Class<?> inputClass = Class.forName("net.minecraft.world.inventory.ContainerInput");
-            Object swapInput = Enum.valueOf((Class<Enum>) inputClass.asSubclass(Enum.class), "SWAP");
-
-            CLIENT.gameMode.getClass()
-                    .getMethod("handleContainerInput", int.class, int.class, int.class, inputClass,
-                            net.minecraft.world.entity.player.Player.class)
-                    .invoke(CLIENT.gameMode, containerId, slotIndex, 40, swapInput, CLIENT.player);
-            return true;
-        } catch (ReflectiveOperationException | IllegalArgumentException ignored) {
-            return false;
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static boolean invokeLegacyClickTypeSwap(int containerId, int slotIndex) {
-        try {
-            Class<?> clickTypeClass = Class.forName("net.minecraft.world.inventory.ClickType");
-            Object swapClick = Enum.valueOf((Class<Enum>) clickTypeClass.asSubclass(Enum.class), "SWAP");
-
-            CLIENT.gameMode.getClass()
-                    .getMethod("handleInventoryMouseClick", int.class, int.class, int.class, clickTypeClass,
-                            net.minecraft.world.entity.player.Player.class)
-                    .invoke(CLIENT.gameMode, containerId, slotIndex, 40, swapClick, CLIENT.player);
-            return true;
-        } catch (ReflectiveOperationException | IllegalArgumentException ignored) {
-            return false;
-        }
+    /** 把槽位与副手（40）交换。26.1.2 起 ClickType 更名为 ContainerInput，方法名也随之改变。 */
+    private static void swapWithOffhand(int containerId, int slotIndex) {
+        //? if >=26.1.2 {
+        CLIENT.gameMode.handleContainerInput(containerId, slotIndex, 40, ContainerInput.SWAP, CLIENT.player);
+        //?} else {
+        /*CLIENT.gameMode.handleInventoryMouseClick(containerId, slotIndex, 40, ClickType.SWAP, CLIENT.player);*/
+        //?}
     }
 }
 

@@ -11,11 +11,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 /**
  * 第一人称手臂挥动速度调整（ViewModel 的一部分）。
  * 仅缩放 LocalPlayer 的攻击动画返回值（纯视觉），不影响攻击判定与 swingTime。
+ * <p>
+ * 26.3 把 {@code getAttackAnim(float)} 更名成了 {@code getSwingAnimation(float)}
+ * （内部改委托给 {@code LivingEntity.SwingState#getAnimation}），返回值语义相同，都是 0~1 的挥动进度。
  */
 @Mixin(LivingEntity.class)
 public class HeldSwingMixin {
 
-    @Inject(method = "getAttackAnim", at = @At("RETURN"), cancellable = true)
+    //? if >=26.3 {
+    /*@Inject(method = "getSwingAnimation(F)F", at = @At("RETURN"), cancellable = true)*/
+    //?} else {
+    @Inject(method = "getAttackAnim(F)F", at = @At("RETURN"), cancellable = true)
+    //?}
     private void milkytools$adjustSwingSpeed(float partialTicks, CallbackInfoReturnable<Float> cir) {
         if (!Configs.HELD_MODEL_ENABLED.getBooleanValue()) {
             return;
