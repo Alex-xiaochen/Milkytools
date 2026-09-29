@@ -62,6 +62,12 @@ dependencies {
     // so it stays compile-only plus dev runtime and never becomes a hard dependency.
     modCompileOnly("com.terraformersmc:modmenu:${property("modmenu_version")}")
     modLocalRuntime("com.terraformersmc:modmenu:${property("modmenu_version")}")
+
+    // Carpet is a dev-runtime convenience. /carpet and its rules are registered on the
+    // server side, and a runClient dev launch runs the integrated server off this same
+    // classpath - without the jar there, singleplayer worlds have no /carpet at all.
+    // Nothing in the source compiles against it, so it never becomes a real dependency.
+    modLocalRuntime("maven.modrinth:carpet:${property("carpet_version")}")
 }
 
 java {
