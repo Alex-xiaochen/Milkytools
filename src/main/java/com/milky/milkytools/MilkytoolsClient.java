@@ -5,6 +5,7 @@ import com.milky.milkytools.config.Configs;
 import com.milky.milkytools.config.HotkeysCallback;
 import com.milky.milkytools.config.InputHandler;
 import com.milky.milkytools.features.NameTags;
+import com.milky.milkytools.features.PearlNameTags;
 import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.event.InputEventHandler;
 import net.fabricmc.api.ClientModInitializer;
@@ -45,6 +46,19 @@ public class MilkytoolsClient implements ClientModInitializer {
         /*HudElementRegistry.addLast(
                 Identifier.fromNamespaceAndPath(MOD_ID, "nametags"),
                 NameTags::onHudRender
+        );*/
+        //?}
+
+        // 珍珠名牌。注册在玩家名牌之后，两者重叠时画在玩家名牌上面。
+        //? if >=26.1.2 {
+        HudElementRegistry.addLast(
+                Identifier.fromNamespaceAndPath(MOD_ID, "pearl_nametags"),
+                PearlNameTags::onHudExtract
+        );
+        //?} else {
+        /*HudElementRegistry.addLast(
+                Identifier.fromNamespaceAndPath(MOD_ID, "pearl_nametags"),
+                PearlNameTags::onHudRender
         );*/
         //?}
 

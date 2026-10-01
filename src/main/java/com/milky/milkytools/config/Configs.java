@@ -192,6 +192,31 @@ public class Configs implements IConfigHandler {
             "名牌 最小缩放", 0.55, 0.2, 2.0, "远距离时的名牌最小缩放倍数，会随距离在最大/最小缩放之间过渡。"
     );
 
+    public static final ConfigBooleanHotkeyed PEARL_NAMETAGS_ENABLED = new ConfigBooleanHotkeyed(
+            "珍珠名牌",
+            false,
+            "",
+            "开启后，在每颗飞行中的末影珍珠上方显示投掷者的名字，用来判断珍珠是谁扔的。\n纯客户端显示，可穿透方块看到。\n投掷者不在客户端加载范围内（或珍珠由发射器/指令生成）时无法显示名字。"
+    );
+
+    public static final ConfigDouble PEARL_NAMETAGS_RANGE = new ConfigDouble(
+            "珍珠名牌 范围", 64.0, 8.0, 256.0, "在此距离（格）内的末影珍珠才会显示投掷者名字。"
+    );
+
+    public static final ConfigDouble PEARL_NAMETAGS_SCALE = new ConfigDouble(
+            "珍珠名牌 缩放", 0.8, 0.4, 2.0, "珍珠名牌的整体缩放倍数，不随距离过渡，保证远处也看得清。"
+    );
+
+    public static final ConfigBoolean PEARL_NAMETAGS_SELF = new ConfigBoolean(
+            "珍珠名牌 显示自己", false, "是否为本地玩家自己投出的末影珍珠显示名字。"
+    );
+
+    public static final ConfigBoolean PEARL_NAMETAGS_ONLY_VISIBLE = new ConfigBoolean(
+            "珍珠名牌 仅无界面时",
+            true,
+            "开启时，只要打开了任意界面（背包、聊天等）就隐藏珍珠名牌；关闭时始终显示。"
+    );
+
     public static final ConfigBooleanHotkeyed SPAWNER_BOXES_ENABLED = new ConfigBooleanHotkeyed(
             "试炼描框",
             false,
@@ -366,6 +391,7 @@ public class Configs implements IConfigHandler {
             MOTION_CAMERA_ENABLED,
             TOTEM_PARTICLE_ENABLED,
             NAMETAGS_ENABLED,
+            PEARL_NAMETAGS_ENABLED,
             SPAWNER_BOXES_ENABLED,
             AMETHYST_BOXES_ENABLED,
             OBSIDIAN_BOXES_ENABLED,
@@ -409,6 +435,11 @@ public class Configs implements IConfigHandler {
             NAMETAGS_RANGE,
             NAMETAGS_MAX_SCALE,
             NAMETAGS_MIN_SCALE,
+            PEARL_NAMETAGS_ENABLED,
+            PEARL_NAMETAGS_RANGE,
+            PEARL_NAMETAGS_SCALE,
+            PEARL_NAMETAGS_SELF,
+            PEARL_NAMETAGS_ONLY_VISIBLE,
             SPAWNER_BOXES_ENABLED,
             SPAWNER_BOXES_FILL,
             SPAWNER_BOXES_FILL_ALPHA,

@@ -2,36 +2,33 @@ package com.milky.milkytools.mixin;
 
 import com.milky.milkytools.config.Configs;
 import com.milky.milkytools.features.TrajectoryGizmos;
+import com.milky.milkytools.features.TrajectorySimulation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.debug.DebugRenderer;
-import net.minecraft.gizmos.Gizmos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ChargedProjectiles;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * 手持弓（按当前拉弓力度）或已上弦的弩时，按箭矢物理预测其轨迹，并用 Gizmo 绘制连线与落点标记。
- * 物理与香草 AbstractArrow 一致：初速度由拉弓力度/弩决定，重力 0.05，空气阻力每 tick 0.99。
+ * 手持弓（按当前拉弓力度）或弩时，按箭矢物理预测其轨迹，并用 Gizmo 绘制连线与落点标记。
+ * 物理（含随机散布与水中阻力）见 {@link TrajectorySimulation}。
  * 颜色与珍珠轨迹共用配置项“轨迹颜色”。
  */
 @Mixin(DebugRenderer.class)
 public class ArrowTrajectoryMixin {
-    private static final double GRAVITY = 0.05;
-    private static final double AIR_DRAG = 0.99;
+    /** 香草 BowItem 的满蓄力初速度：{@code getPowerForTime(t) * 3.0F}。 */
     private static final double BOW_MAX_SPEED = 3.0;
-    private static final double CROSSBOW_SPEED = 3.15;
-    private static final double CROSSBOW_UNCHARGED_SPEED = 1.6;
-    private static final int MAX_TICKS = 200;
+    /** 香草 CrossbowItem 的箭矢初速度（ARROW_POWER）。 */
+    private static final double CROSSBOW_ARROW_SPEED = 3.15;
 
     @Inject(method = "emitGizmos", at = @At("TAIL"))
     private void milkytools$drawArrowTrajectory(Frustum frustum, double camX, double camY, double camZ, float partialTick, CallbackInfo ci) {
@@ -65,33 +62,19 @@ public class ArrowTrajectoryMixin {
             speed = power * BOW_MAX_SPEED;
         } else {
             ItemStack crossbowStack = mainHand.getItem() instanceof CrossbowItem ? mainHand : offHand;
-            speed = CrossbowItem.isCharged(crossbowStack) ? CROSSBOW_SPEED : CROSSBOW_UNCHARGED_SPEED;
-        }
-
-        Level level = player.level();
-        Vec3 eye = player.getEyePosition();
-        Vec3 look = player.getLookAngle();
-        int color = TrajectoryGizmos.colorOf();
-
-        Vec3 position = eye;
-        Vec3 velocity = look.scale(speed);
-        Vec3 previous = position;
-
-        for (int tick = 0; tick < MAX_TICKS; tick++) {
-            Vec3 next = position.add(velocity);
-            ClipContext context = new ClipContext(position, next, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player);
-            HitResult hit = level.clip(context);
-
-            if (hit != null && hit.getType() != HitResult.Type.MISS) {
-                TrajectoryGizmos.drawSegment(previous, hit.getLocation(), color);
-                Gizmos.point(hit.getLocation(), color, 0.25F);
-                break;
+            // 装填了烟花火箭的弩发射的是 FireworkRocketEntity，加速方式与箭矢完全不同，无法用这套物理预测。
+            if (isFireworkLoaded(crossbowStack)) {
+                return;
             }
-
-            TrajectoryGizmos.drawSegment(previous, next, color);
-            previous = next;
-            position = next;
-            velocity = velocity.subtract(0.0, GRAVITY, 0.0).scale(AIR_DRAG);
+            speed = CROSSBOW_ARROW_SPEED;
         }
+
+        TrajectorySimulation.render(player, speed, TrajectorySimulation.Kind.ARROW, TrajectoryGizmos.colorOf());
+    }
+
+    /** 已上弦且装填的是烟花火箭。未上弦时返回 false，此时按上弦后的箭矢速度预览。 */
+    private static boolean isFireworkLoaded(ItemStack crossbowStack) {
+        ChargedProjectiles charged = crossbowStack.get(DataComponents.CHARGED_PROJECTILES);
+        return charged != null && charged.contains(Items.FIREWORK_ROCKET);
     }
 }
