@@ -1,6 +1,7 @@
 package com.milky.milkytools.mixin;
 
 import com.milky.milkytools.features.CoordinateBeacon;
+import com.milky.milkytools.features.HighlightWaypoint;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,6 +33,8 @@ public class ChatComponentMixin {
             at = @At("HEAD"), argsOnly = true, require = 1)
     *///?}
     private Component milkytools$clickableCoordinates(Component message) {
-        return CoordinateBeacon.makeClickable(message);
+        // 两个功能识别的坐标写法不同（裸空格 vs 括号/键名），按固定顺序串联；
+        // 任一功能关闭时都会原样返回，不会影响另一个。
+        return HighlightWaypoint.makeClickable(CoordinateBeacon.makeClickable(message));
     }
 }

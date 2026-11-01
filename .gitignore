@@ -4,6 +4,9 @@ build/
 out/
 classes/
 
+# collected mod jars
+构建产物/
+
 # eclipse
 *.launch
 

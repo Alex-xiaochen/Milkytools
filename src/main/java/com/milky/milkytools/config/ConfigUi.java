@@ -1,7 +1,6 @@
 package com.milky.milkytools.config;
 
 import com.milky.milkytools.MilkytoolsClient;
-import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.gui.GuiConfigsBase;
 import fi.dy.masa.malilib.gui.GuiConfigsBase.ConfigOptionWrapper;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
@@ -50,15 +49,14 @@ public class ConfigUi extends GuiConfigsBase {
 
     @Override
     public List<ConfigOptionWrapper> getConfigs() {
-        List<? extends IConfigBase> configs;
-
         if (ConfigUi.currentTab == ConfigGuiTab.HOTKEYS) {
-            configs = Configs.KEY_LIST;
-        } else {
-            configs = Configs.ALL_CONFIGS;
+            return ConfigOptionWrapper.createFor(Configs.KEY_LIST);
+        }
+        if (ConfigUi.currentTab == ConfigGuiTab.PORTING) {
+            return ConfigOptionWrapper.createFor(Configs.PORTED_CONFIGS);
         }
 
-        return ConfigOptionWrapper.createFor(configs);
+        return ConfigOptionWrapper.createFor(Configs.ALL_CONFIGS);
     }
 
     @Override
@@ -75,7 +73,8 @@ public class ConfigUi extends GuiConfigsBase {
 
     private enum ConfigGuiTab {
         HOTKEYS("工具热键"),
-        ALL("全部工具");
+        ALL("全部工具"),
+        PORTING("移植");
 
         private final String displayName;
 

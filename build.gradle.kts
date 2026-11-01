@@ -110,9 +110,14 @@ tasks.processResources {
 // 0.7), so register one. loomx.modJar is remapJar on obfuscated nodes and jar on the rest.
 // Sync rather than Copy so each per-version directory mirrors the build output exactly;
 // a plain copy would leave stale jars behind when an artifact stops being produced.
+//
+// Artifacts are collected outside build/ (which `clean` wipes) into 构建产物/ at the
+// repository root, one subdirectory per Minecraft version. Keeping the subdirectories is
+// also what keeps the Sync above safe: a single flat directory would let the first
+// version's Sync delete every other version's jar.
 tasks.register<Sync>("buildAndCollect") {
     group = "build"
-    description = "Builds the mod and collects the jar into build/libs/<minecraft version>/"
+    description = "Builds the mod and collects the jar into 构建产物/<minecraft version>/"
     from(loomx.modJar)
-    into(rootProject.layout.buildDirectory.dir("libs/$minecraftVersion"))
+    into(rootProject.layout.projectDirectory.dir("构建产物/$minecraftVersion"))
 }

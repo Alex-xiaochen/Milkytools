@@ -4,11 +4,13 @@ import com.milky.milkytools.config.ConfigUi;
 import com.milky.milkytools.config.Configs;
 import com.milky.milkytools.config.HotkeysCallback;
 import com.milky.milkytools.config.InputHandler;
+import com.milky.milkytools.features.HighlightWaypoint;
 import com.milky.milkytools.features.NameTags;
 import com.milky.milkytools.features.PearlNameTags;
 import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.event.InputEventHandler;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
@@ -74,8 +76,15 @@ public class MilkytoolsClient implements ClientModInitializer {
         fi.dy.masa.malilib.event.TickHandler.getInstance()
                 .registerClientTickHandler(minecraft -> com.milky.milkytools.features.ObsidianBoxes.onClientTick());
 
+        // 高亮坐标点的客户端命令与维度切换检测。
+        ClientCommandRegistrationCallback.EVENT.register(
+                (dispatcher, buildContext) -> HighlightWaypoint.registerCommand(dispatcher));
+
         fi.dy.masa.malilib.event.TickHandler.getInstance()
                 .registerClientTickHandler(minecraft -> com.milky.milkytools.features.CoordinateBeacon.onClientTick());
+
+        fi.dy.masa.malilib.event.TickHandler.getInstance()
+                .registerClientTickHandler(minecraft -> HighlightWaypoint.onClientTick());
 
         fi.dy.masa.malilib.event.TickHandler.getInstance()
                 .registerClientTickHandler(minecraft -> com.milky.milkytools.features.ItemBlacklist.onClientTick());

@@ -120,6 +120,30 @@ public class Configs implements IConfigHandler {
             "运动相机 速度", 0.3, 0.0, 1.0, "非第一人称（第三人称）下相机平滑跟随的速度（0 完全静止，1 完全贴合真实位置）。"
     );
 
+    public static final ConfigBooleanHotkeyed PORTAL_EFFECT_DISABLED = new ConfigBooleanHotkeyed(
+            "禁用地狱门特效",
+            false,
+            "",
+            "开启后，穿过地狱门时的画面旋转/拉伸扭曲与紫色传送门叠加层都不再显示。\n仅影响显示，反胃效果与传送本身的行为不变。"
+    );
+
+    public static final ConfigBooleanHotkeyed HIGHLIGHT_WAYPOINT_ENABLED = new ConfigBooleanHotkeyed(
+            "高亮坐标点",
+            false,
+            "",
+            "移植功能：用 /highlightWaypoint x y z 或在聊天栏点击 [x:.., y:.., z:..] 形式的坐标，标记一个坐标点。\n标记后会显示坐标与距离标签；对同一坐标再次执行/点击会额外显示 10 秒信标光柱。\n进出下界时坐标会按 1/8、8 倍自动换算。"
+    );
+
+    public static final ConfigColor HIGHLIGHT_WAYPOINT_COLOR = new ConfigColor(
+            "高亮坐标点 颜色", Color4f.fromColor(0xFF0000)
+    );
+
+    /** 「移植」标签页里展示的移植功能配置项。 */
+    public static final ImmutableList<IConfigBase> PORTED_CONFIGS = ImmutableList.of(
+            HIGHLIGHT_WAYPOINT_ENABLED,
+            HIGHLIGHT_WAYPOINT_COLOR
+    );
+
     public static final ConfigBooleanHotkeyed TOTEM_PARTICLE_ENABLED = new ConfigBooleanHotkeyed(
             "图腾粒子自定义",
             false,
@@ -147,7 +171,7 @@ public class Configs implements IConfigHandler {
             "自定义名牌",
             false,
             "",
-            "开启后，在屏幕上为其他玩家绘制投影名牌：名称、延迟、血量与图腾次数，并可显示护甲/手持物品。\n纯客户端显示，不影响服务端与其他玩家。"
+            "开启后，在屏幕上为其他玩家绘制投影名牌：名称、延迟、距离、血量与图腾次数，并可显示护甲/手持物品。\n纯客户端显示，不影响服务端与其他玩家。"
     );
 
     public static final ConfigBoolean NAMETAGS_PING = new ConfigBoolean(
@@ -156,6 +180,10 @@ public class Configs implements IConfigHandler {
 
     public static final ConfigBoolean NAMETAGS_HEALTH = new ConfigBoolean(
             "名牌 血量", true, "在名牌上显示该玩家的当前血量（含伤害吸收）。"
+    );
+
+    public static final ConfigBoolean NAMETAGS_DISTANCE = new ConfigBoolean(
+            "名牌 距离", true, "在名牌上显示该玩家与你的距离（格）。"
     );
 
     public static final ConfigBoolean NAMETAGS_POPS = new ConfigBoolean(
@@ -389,6 +417,8 @@ public class Configs implements IConfigHandler {
             ARROW_TRAJECTORY,
             HELD_MODEL_ENABLED,
             MOTION_CAMERA_ENABLED,
+            PORTAL_EFFECT_DISABLED,
+            HIGHLIGHT_WAYPOINT_ENABLED,
             TOTEM_PARTICLE_ENABLED,
             NAMETAGS_ENABLED,
             PEARL_NAMETAGS_ENABLED,
@@ -419,6 +449,9 @@ public class Configs implements IConfigHandler {
             MOTION_CAMERA_NO_FIRST_PERSON,
             MOTION_CAMERA_FIRST_PERSON_SPEED,
             MOTION_CAMERA_SPEED,
+            PORTAL_EFFECT_DISABLED,
+            HIGHLIGHT_WAYPOINT_ENABLED,
+            HIGHLIGHT_WAYPOINT_COLOR,
             TOTEM_PARTICLE_ENABLED,
             TOTEM_PARTICLE_VELOCITY_XZ,
             TOTEM_PARTICLE_VELOCITY_Y,
@@ -427,6 +460,7 @@ public class Configs implements IConfigHandler {
             NAMETAGS_ENABLED,
             NAMETAGS_PING,
             NAMETAGS_HEALTH,
+            NAMETAGS_DISTANCE,
             NAMETAGS_POPS,
             NAMETAGS_ARMOR,
             NAMETAGS_HANDS,

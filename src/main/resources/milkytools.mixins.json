@@ -12,6 +12,7 @@
     "HeldModelMixin",
     "HeldSwingMixin",
     "CameraMixin",
+    "PortalEffectMixin",
     "TotemParticleMixin",
     "NameTagsMixin",
     "SpawnerBoxesMixin",
@@ -19,6 +20,7 @@
     "ObsidianBoxesMixin",
     "ViewArrowMixin",
     "CoordinateBeaconMixin",
+    "HighlightWaypointMixin",
     "ChatComponentMixin",
     "ChatScreenMixin",
     "masa.MixinLitematicaInventoryUtils"

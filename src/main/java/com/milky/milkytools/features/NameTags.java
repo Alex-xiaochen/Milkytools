@@ -30,10 +30,10 @@ import static com.milky.milkytools.features.ScreenTagRenderer.BOX_COLOR;
 
 /**
  * 自定义玩家名牌（NameTags）：把每个玩家头顶的世界坐标投影到屏幕，
- * 再在 2D 画面上绘制名称、延迟、血量、图腾次数与装备。
+ * 再在 2D 画面上绘制名称、延迟、距离、血量、图腾次数与装备。
  * <p>
  * 投影（世界坐标 → GUI 像素）与 {@link Painter} 层由 {@link ScreenTagRenderer} 提供，
- * 与末影珍珠名牌共用；本类只负责玩家名牌自己的版面：名称、延迟、血量、图腾、装备。
+ * 与末影珍珠名牌共用；本类只负责玩家名牌自己的版面：名称、延迟、距离、血量、图腾、装备。
  * <p>
  * 图腾次数由客户端收到的实体事件（eventId 35）统计，不依赖外部事件总线；
  * 名称颜色使用原版队伍颜色，并保留隐身/死亡的状态色。
@@ -41,6 +41,7 @@ import static com.milky.milkytools.features.ScreenTagRenderer.BOX_COLOR;
 public final class NameTags {
     private static final Minecraft CLIENT = Minecraft.getInstance();
     private static final DecimalFormat HEALTH_FORMAT = new DecimalFormat("0.0");
+    private static final DecimalFormat DISTANCE_FORMAT = new DecimalFormat("0.0");
 
     /** 图腾使用事件：原版在该事件里播放不死图腾粒子与音效（ClientPacketListener）。 */
     public static final int TOTEM_USE_EVENT_ID = 35;
@@ -49,6 +50,7 @@ public final class NameTags {
     private static final int BAR_BACKGROUND = 0x66000000;
     private static final int ABSORPTION_COLOR = 0xFFFFD24A;
     private static final int PING_COLOR = 0xFFAAAAAA;
+    private static final int DISTANCE_COLOR = 0xFF9FC4E0;
     private static final int POP_COLOR = 0xFFFF5555;
     private static final int INVISIBLE_COLOR = 0xFFC8C8C8;
     private static final int DEAD_COLOR = 0xFFFF7777;
@@ -121,7 +123,7 @@ public final class NameTags {
             }
 
             drawTag(painter, player, ScreenTagRenderer.screenX(), ScreenTagRenderer.screenY(),
-                    scaleForDistance(distance));
+                    scaleForDistance(distance), distance);
         }
     }
     //?} else {
@@ -151,7 +153,7 @@ public final class NameTags {
             }
 
             drawTag(painter, player, ScreenTagRenderer.screenX(), ScreenTagRenderer.screenY(),
-                    scaleForDistance(distance));
+                    scaleForDistance(distance), distance);
         }
     }*/
     //?}
@@ -174,15 +176,16 @@ public final class NameTags {
     }
 
     /** 先在原始 GUI 坐标里定位，再以原点为基准缩放，等价于参照实现的矩阵缩放。 */
-    private static void drawTag(Painter painter, Player player, float screenX, float screenY, float scale) {
+    private static void drawTag(Painter painter, Player player, float screenX, float screenY, float scale,
+                                double distance) {
         painter.pushScale(scale);
-        drawTagAt(painter, player, Math.round(screenX / scale), Math.round(screenY / scale));
+        drawTagAt(painter, player, Math.round(screenX / scale), Math.round(screenY / scale), distance);
         painter.pop();
     }
 
-    private static void drawTagAt(Painter painter, Player player, int centerX, int centerY) {
+    private static void drawTagAt(Painter painter, Player player, int centerX, int centerY, double distance) {
         Font font = CLIENT.font;
-        TagLayout layout = TagLayout.of(player, centerY);
+        TagLayout layout = TagLayout.of(player, centerY, distance);
         int top = layout.top();
         int bottom = layout.bottom();
         int halfWidth = layout.halfWidth();
@@ -236,9 +239,9 @@ public final class NameTags {
     private record TagLayout(List<Segment> segments, List<ItemStack> equipment,
                              int textWidth, int lineHeight, int halfWidth, int top, int bottom) {
 
-        static TagLayout of(Player player, int centerY) {
+        static TagLayout of(Player player, int centerY, double distance) {
             Font font = CLIENT.font;
-            List<Segment> segments = buildSegments(player);
+            List<Segment> segments = buildSegments(player, distance);
 
             int textWidth = 0;
             for (Segment segment : segments) {
@@ -254,13 +257,17 @@ public final class NameTags {
         }
     }
 
-    private static List<Segment> buildSegments(Player player) {
+    private static List<Segment> buildSegments(Player player, double distance) {
         List<Segment> segments = new ArrayList<>();
         segments.add(new Segment(player.getName().getString(), nameColor(player)));
 
         if (Configs.NAMETAGS_PING.getBooleanValue()) {
             int ping = pingOf(player);
             segments.add(new Segment(ping < 0 ? " --" : " " + ping + "ms", PING_COLOR));
+        }
+
+        if (Configs.NAMETAGS_DISTANCE.getBooleanValue()) {
+            segments.add(new Segment(" " + DISTANCE_FORMAT.format(distance) + "m", DISTANCE_COLOR));
         }
 
         if (Configs.NAMETAGS_HEALTH.getBooleanValue()) {
